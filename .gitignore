@@ -1,0 +1,6 @@
+*.pickle
+*.json
+*.txt
+*.ipynb
+other/
+**/__pycache__
