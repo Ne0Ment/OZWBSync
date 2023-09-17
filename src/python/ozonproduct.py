@@ -4,38 +4,38 @@ from typing import List
 from ozonattributes import Attribute, AttributeSerializer
 
 
-class DimensionUnit(Enum):
+class OzonDimensionUnit(Enum):
     MM = 'mm'
     CM = 'cm'
     IN = 'in'
 
 
-class WeightUnit(Enum):
+class OzonWeightUnit(Enum):
     GRAMMS = 'g'
     KG = 'kg'
     LB = 'lb'
 
 
-class CurrencyCode(Enum):
+class OzonCurrencyCode(Enum):
     RUB = 'RUB'
     USD = 'USD'
 
 
-class NDSValue(Enum):
+class OzonNDSValue(Enum):
     ZERO = '0'
     TEN = '0.1'
     TWENTY = '0.2'
 
 
-class ProductDimensions():
-    def __init__(self, dimension_unit: DimensionUnit, height: int, width: int, depth: int) -> None:
+class OzonProductDimensions():
+    def __init__(self, dimension_unit: OzonDimensionUnit, height: int, width: int, depth: int) -> None:
         self.dimension_unit = dimension_unit
         self.height = height
         self.width = width
         self.depth = depth
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, ProductDimensions):
+        if isinstance(other, OzonProductDimensions):
             return self.dimension_unit == other.dimension_unit and \
                 self.height == other.height and \
                 self.width == other.width and \
@@ -43,59 +43,59 @@ class ProductDimensions():
         return False
 
 
-class ProductWeight():
-    def __init__(self, weight_unit: WeightUnit, weight: int) -> None:
+class OzonProductWeight():
+    def __init__(self, weight_unit: OzonWeightUnit, weight: int) -> None:
         self.weight_unit = weight_unit
         self.weight = weight
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, ProductWeight):
+        if isinstance(other, OzonProductWeight):
             return self.weight == other.weight and \
                 self.weight_unit == other.weight_unit
         return False
 
 
-class ProductPrices():
+class OzonProductPrices():
     def __init__(self, old_price: str, price: str, min_price: str) -> None:
         self.old_price = old_price
         self.price = price
         self.min_price = min_price
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, ProductPrices):
+        if isinstance(other, OzonProductPrices):
             return self.old_price == other.old_price and \
                 self.price == other.price and \
                 self.min_price == other.min_price
         return False
 
 
-class ProductMedia():
+class OzonProductMedia():
     def __init__(self, images: List[str]) -> None:
         self.images = images
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, ProductMedia):
+        if isinstance(other, OzonProductMedia):
             return self.images == other.images
         return False
 
 
-class ProductGeneralInfo():
+class OzonProductGeneralInfo():
     def __init__(self, name: str, offer_id: str, category_id: int) -> None:
         self.name = name
         self.offer_id = offer_id
         self.category_id = category_id
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, ProductGeneralInfo):
+        if isinstance(other, OzonProductGeneralInfo):
             return self.name == other.name and \
                 self.offer_id == other.offer_id and \
                 self.category_id == other.category_id
         return False
 
 
-class Product():
-    def __init__(self, dimensions: ProductDimensions, weight: ProductWeight,
-                 media: ProductMedia, attributes: set[Attribute], info: ProductGeneralInfo) -> None:
+class OzonProduct():
+    def __init__(self, dimensions: OzonProductDimensions, weight: OzonProductWeight,
+                 media: OzonProductMedia, attributes: set[Attribute], info: OzonProductGeneralInfo) -> None:
         self.dimensions = dimensions
         self.weight = weight
         self.media = media
@@ -103,7 +103,7 @@ class Product():
         self.info = info
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, Product):
+        if isinstance(other, OzonProduct):
             return self.dimensions == other.dimensions and \
                 self.weight == other.weight and \
                 self.media == other.media and \
@@ -116,7 +116,7 @@ class ProductSerializer():
     def __init__(self, attributeSerializer: AttributeSerializer) -> None:
         self.attributeSerializer = attributeSerializer
 
-    def to_dict(self, product: Product):
+    def to_dict(self, product: OzonProduct):
         return {
             'name': product.info.name,
             'offer_id': product.info.offer_id,
@@ -136,23 +136,23 @@ class ProductSerializer():
             },
             'attributes': [self.attributeSerializer.to_dict(i) for i in product.attributes]}
 
-    def from_dict(self, data) -> Product:
+    def from_dict(self, data) -> OzonProduct:
         attributeSerializer = AttributeSerializer()
-        return Product(
-            dimensions=ProductDimensions(DimensionUnit(data['dimensions']['dimension_unit']),
-                                         data['dimensions']['height'],
-                                         data['dimensions']['width'],
-                                         data['dimensions']['depth']),
+        return OzonProduct(
+            dimensions=OzonProductDimensions(OzonDimensionUnit(data['dimensions']['dimension_unit']),
+                                             data['dimensions']['height'],
+                                             data['dimensions']['width'],
+                                             data['dimensions']['depth']),
 
-            weight=ProductWeight(WeightUnit(data['weight']['weight_unit']),
-                                 data['weight']['weight']),
+            weight=OzonProductWeight(OzonWeightUnit(data['weight']['weight_unit']),
+                                     data['weight']['weight']),
 
-            media=ProductMedia(data['media']['images']),
+            media=OzonProductMedia(data['media']['images']),
 
             attributes=set([attributeSerializer.from_dict(i)
                            for i in data['attributes']]),
 
-            info=ProductGeneralInfo(
+            info=OzonProductGeneralInfo(
                 data['name'], data['offer_id'], data['category_id'])
 
         )
