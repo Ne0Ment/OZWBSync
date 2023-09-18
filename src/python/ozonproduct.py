@@ -2,6 +2,7 @@ from enum import Enum
 from typing import List
 
 from ozonattributes import Attribute, AttributeSerializer
+from itertools import product as iter_product
 
 
 class OzonDimensionUnit(Enum):
@@ -42,6 +43,9 @@ class OzonProductDimensions():
                 self.depth == other.depth
         return False
 
+    def __str__(self) -> str:
+        return f'height: {self.height} width: {self.width} depth: {self.depth} unit: {self.dimension_unit}\n'
+
 
 class OzonProductWeight():
     def __init__(self, weight_unit: OzonWeightUnit, weight: int) -> None:
@@ -53,6 +57,9 @@ class OzonProductWeight():
             return self.weight == other.weight and \
                 self.weight_unit == other.weight_unit
         return False
+
+    def __str__(self) -> str:
+        return f'unit: {self.weight_unit} weight: {self.weight}\n'
 
 
 class OzonProductPrices():
@@ -68,6 +75,9 @@ class OzonProductPrices():
                 self.min_price == other.min_price
         return False
 
+    def __str__(self) -> str:
+        return f'price: {self.price} old_price: {self.old_price} min_price: {self.min_price}\n'
+
 
 class OzonProductMedia():
     def __init__(self, images: List[str]) -> None:
@@ -77,6 +87,9 @@ class OzonProductMedia():
         if isinstance(other, OzonProductMedia):
             return self.images == other.images
         return False
+
+    def __str__(self) -> str:
+        return f'images: {[" ".join(self.images)]}\n'
 
 
 class OzonProductGeneralInfo():
@@ -91,6 +104,9 @@ class OzonProductGeneralInfo():
                 self.offer_id == other.offer_id and \
                 self.category_id == other.category_id
         return False
+
+    def __str__(self) -> str:
+        return f'name: {self.name} offer_id: {self.offer_id} category_id: {self.category_id}\n'
 
 
 class OzonProduct():
@@ -110,6 +126,37 @@ class OzonProduct():
                 self.attributes == other.attributes and \
                 self.info == other.info
         return False
+
+    def __str__(self) -> str:
+        attributes_str = '\n' + \
+            '\n    '.join([str(i) for i in self.attributes]) + '\n'
+        return 'ozonproduct\n' + \
+            'info: ' + str(self.info) + \
+            'weight: ' + str(self.weight) + \
+            'media: ' + str(self.media) + \
+            'dimensions: ' + str(self.dimensions) + \
+            'attributes: ' + attributes_str
+
+
+class OzonGeneralProduct(OzonProduct):
+    def __init__(self, dimensions: OzonProductDimensions, weight: OzonProductWeight,
+                 media: OzonProductMedia, attributes: List[Attribute],
+                 varying_attributes: List[List[Attribute]],
+                 info: OzonProductGeneralInfo) -> None:
+        super().__init__(dimensions, weight, media, attributes, info)
+        self.varying_attributes = varying_attributes
+
+    def expand_into_products(self) -> List[OzonProduct]:
+        products = []
+        attribute_variations = iter_product(*self.varying_attributes)
+        for attribute_variation in attribute_variations:
+            products.append(OzonProduct(self.dimensions,
+                                        self.weight,
+                                        self.media,
+                                        self.attributes | set(
+                                            attribute_variation),
+                                        self.info))
+        return products
 
 
 class ProductSerializer():

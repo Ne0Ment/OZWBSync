@@ -24,6 +24,9 @@ class Attribute():
     def __hash__(self) -> int:
         return hash(hash(self._id) + hash(self.name) + hash(self.value))
 
+    def __str__(self) -> str:
+        return f'id: {self._id} name: {self.name} value: {self.value}'
+
 
 class StringAttribute(Attribute):
     def __init__(self, _id, name, value):
@@ -65,6 +68,12 @@ class MultiAttribute(Attribute):
 
     def verify(self):
         return self.value != []
+
+    def __hash__(self) -> int:
+        s = hash(self._id) + hash(self.name)
+        for val in self.value:
+            s += hash(val)
+        return hash(s)
 
 
 class MultiStringAttribute(MultiAttribute):

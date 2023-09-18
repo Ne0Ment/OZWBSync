@@ -4,6 +4,7 @@
 *.ipynb
 *.png
 *.jpg
+**/tt.py
 other/
 **/__pycache__
 *.DS_Store
