@@ -1,6 +1,7 @@
-from python.ozonattributes import AdultAttribute, AnnotationAttribute, AttributeVerifier, BrandAttribute, CareInstructionsAttribute, ColorAttribute, ColorNameAttribute, GenderAttribute, GroupingAttribute, JsonSizeTableAttribute, MaterialAttribute, MaterialCompositionAttribute, NameAttribute, NeckShapeAttribute, PackageTypeAttribute, PackagedWeightAttribute, PhotoProductSizeAttribute, PrintTypeAttribute, ProducerArticleAttribute, ProducerCountryAttribute, ProducerSizeAttribute, ProductsPerPackageAttribute, RichContentAttribute, RuSizeAttribute, SearchTagsAttribute, SeriesAttribute, SleeveLengthAttribute, SleeveTypeAttribute, TargetAudienceAttribute, TypeAttribute
+from python.ozonattributes import AdultAttribute, AnnotationAttribute, BrandAttribute, CareInstructionsAttribute, ColorAttribute, ColorNameAttribute, GenderAttribute, GroupingAttribute, JsonSizeTableAttribute, MaterialAttribute, MaterialCompositionAttribute, NameAttribute, NeckShapeAttribute, PackageTypeAttribute, PackagedWeightAttribute, PhotoProductSizeAttribute, PrintTypeAttribute, ProducerArticleAttribute, ProducerCountryAttribute, ProducerSizeAttribute, ProductsPerPackageAttribute, RichContentAttribute, RuSizeAttribute, SearchTagsAttribute, SeriesAttribute, SleeveLengthAttribute, SleeveTypeAttribute, TargetAudienceAttribute, TypeAttribute
+from python.serializers import OzonAttributeVerifier
 
-attributeVerifier = AttributeVerifier("ms_attrib_dict.pickle")
+attributeVerifier = OzonAttributeVerifier("ms_attrib_dict.pickle")
 
 
 def test_brand():

@@ -1,8 +1,10 @@
 from enum import Enum
 from typing import List
 
-from ozonattributes import Attribute, AttributeSerializer
+from ozonattributes import Attribute
 from itertools import product as iter_product
+
+from python.utility import same_class
 
 
 class OzonDimensionUnit(Enum):
@@ -35,13 +37,12 @@ class OzonProductDimensions():
         self.width = width
         self.depth = depth
 
+    @same_class
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, OzonProductDimensions):
-            return self.dimension_unit == other.dimension_unit and \
-                self.height == other.height and \
-                self.width == other.width and \
-                self.depth == other.depth
-        return False
+        return self.dimension_unit.value == other.dimension_unit.value and \
+            self.height == other.height and \
+            self.width == other.width and \
+            self.depth == other.depth
 
     def __str__(self) -> str:
         return f'height: {self.height} width: {self.width} depth: {self.depth} unit: {self.dimension_unit}\n'
@@ -52,10 +53,11 @@ class OzonProductWeight():
         self.weight_unit = weight_unit
         self.weight = weight
 
+    @same_class
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, OzonProductWeight):
+        if other.__class__.__qualname__ == self.__class__.__qualname__:
             return self.weight == other.weight and \
-                self.weight_unit == other.weight_unit
+                self.weight_unit.value == other.weight_unit.value
         return False
 
     def __str__(self) -> str:
@@ -68,12 +70,11 @@ class OzonProductPrices():
         self.price = price
         self.min_price = min_price
 
+    @same_class
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, OzonProductPrices):
-            return self.old_price == other.old_price and \
-                self.price == other.price and \
-                self.min_price == other.min_price
-        return False
+        return self.old_price == other.old_price and \
+            self.price == other.price and \
+            self.min_price == other.min_price
 
     def __str__(self) -> str:
         return f'price: {self.price} old_price: {self.old_price} min_price: {self.min_price}\n'
@@ -83,10 +84,9 @@ class OzonProductMedia():
     def __init__(self, images: List[str]) -> None:
         self.images = images
 
+    @same_class
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, OzonProductMedia):
-            return self.images == other.images
-        return False
+        return self.images == other.images
 
     def __str__(self) -> str:
         return f'images: {[" ".join(self.images)]}\n'
@@ -98,12 +98,11 @@ class OzonProductGeneralInfo():
         self.offer_id = offer_id
         self.category_id = category_id
 
+    @same_class
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, OzonProductGeneralInfo):
-            return self.name == other.name and \
-                self.offer_id == other.offer_id and \
-                self.category_id == other.category_id
-        return False
+        return self.name == other.name and \
+            self.offer_id == other.offer_id and \
+            self.category_id == other.category_id
 
     def __str__(self) -> str:
         return f'name: {self.name} offer_id: {self.offer_id} category_id: {self.category_id}\n'
@@ -118,14 +117,13 @@ class OzonProduct():
         self.attributes = attributes
         self.info = info
 
+    @same_class
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, OzonProduct):
-            return self.dimensions == other.dimensions and \
-                self.weight == other.weight and \
-                self.media == other.media and \
-                self.attributes == other.attributes and \
-                self.info == other.info
-        return False
+        return self.dimensions == other.dimensions and \
+            self.weight == other.weight and \
+            self.media == other.media and \
+            self.attributes == other.attributes and \
+            self.info == other.info
 
     def __str__(self) -> str:
         attributes_str = '\n' + \
@@ -158,48 +156,24 @@ class OzonGeneralProduct(OzonProduct):
                                         self.info))
         return products
 
+    @same_class
+    def __eq__(self, other: object) -> bool:
+        return self.dimensions == other.dimensions and \
+            self.weight == other.weight and \
+            self.media == other.media and \
+            self.attributes == other.attributes and \
+            self.varying_attributes == other.varying_attributes and \
+            self.info == other.info
 
-class ProductSerializer():
-    def __init__(self, attributeSerializer: AttributeSerializer) -> None:
-        self.attributeSerializer = attributeSerializer
 
-    def to_dict(self, product: OzonProduct):
-        return {
-            'name': product.info.name,
-            'offer_id': product.info.offer_id,
-            'category_id': product.info.category_id,
-            'weight': {
-                'weight_unit': product.weight.weight_unit.name,
-                'weight': product.weight.weight
-            },
-            'media': {
-                'images': product.media.images
-            },
-            'dimensions': {
-                'dimension_unit': product.dimensions.dimension_unit.name,
-                'depth': product.dimensions.depth,
-                'width': product.dimensions.width,
-                'height': product.dimensions.height
-            },
-            'attributes': [self.attributeSerializer.to_dict(i) for i in product.attributes]}
+class OzonProductCategory():
+    def __init__(self, category_name, category_type, category_products: List[OzonGeneralProduct]) -> None:
+        self.category_name = category_name
+        self.category_type = category_type
+        self.category_products = category_products
 
-    def from_dict(self, data) -> OzonProduct:
-        attributeSerializer = AttributeSerializer()
-        return OzonProduct(
-            dimensions=OzonProductDimensions(OzonDimensionUnit(data['dimensions']['dimension_unit']),
-                                             data['dimensions']['height'],
-                                             data['dimensions']['width'],
-                                             data['dimensions']['depth']),
-
-            weight=OzonProductWeight(OzonWeightUnit(data['weight']['weight_unit']),
-                                     data['weight']['weight']),
-
-            media=OzonProductMedia(data['media']['images']),
-
-            attributes=set([attributeSerializer.from_dict(i)
-                           for i in data['attributes']]),
-
-            info=OzonProductGeneralInfo(
-                data['name'], data['offer_id'], data['category_id'])
-
-        )
+    @same_class
+    def __eq__(self, other: object) -> bool:
+        return self.category_name == other.category_name and \
+            self.category_type == other.category_type and \
+            self.category_products == other.category_products

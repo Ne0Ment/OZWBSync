@@ -1,8 +1,6 @@
 from typing import List
-import pickle
 
-
-ATTRIB_DICT_FILENAME = 'ms_attrib_dict.pickle'
+from python.utility import same_class
 
 
 class Attribute():
@@ -14,12 +12,11 @@ class Attribute():
     def verify(self):
         return True
 
+    @same_class
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, Attribute):
-            return self._id == other._id and \
-                self.name == other.name and \
-                self.value == other.value
-        return False
+        return self._id == other._id and \
+            self.name == other.name and \
+            self.value == other.value
 
     def __hash__(self) -> int:
         return hash(hash(self._id) + hash(self.name) + hash(self.value))
@@ -98,47 +95,6 @@ class MultiNumberAttribute(MultiAttribute):
 
     def verify(self):
         return super().verify() and all([(type(i) == int or type(i) == float) for i in self.value])
-
-
-class AttributeVerifier():
-    def __init__(self, dict_path=ATTRIB_DICT_FILENAME) -> None:
-        with open(dict_path, 'rb') as f:
-            self.attrib_dict: dict = pickle.load(f)
-
-    def _verify_value(self, attribute_id: int, value):
-        if attribute_id not in self.attrib_dict:
-            raise ValueError(attribute_id)
-        if self.attrib_dict[attribute_id]['values'] == []:
-            return True
-        if id2class[attribute_id] == BrandAttribute and value == 'Нет бренда':
-            return True
-        return len([i for i in self.attrib_dict[attribute_id]['values'] if i['value'] == value]) != 0
-
-    def verify_attribute(self, attribute: Attribute):
-        if not attribute.verify():
-            return False
-        if issubclass(attribute.__class__, MultiAttribute):
-            return all([self._verify_value(attribute._id, i) for i in attribute.value])
-
-        return self._verify_value(attribute._id, attribute.value)
-
-
-class AttributeSerializer():
-    def __init__(self, verifier: AttributeVerifier) -> None:
-        self.verifier = verifier
-
-    def to_dict(self, attribute: Attribute):
-        return {
-            'id': attribute._id,
-            'name': attribute.name,
-            'value': attribute.value
-        }
-
-    def from_dict(self, data) -> Attribute:
-        attr: Attribute = id2class[data['id']](data['value'])
-        if self.verifier.verify_attribute(attr):
-            return attr
-        raise ValueError(attr.value)
 
 
 class BrandAttribute(StringAttribute):
