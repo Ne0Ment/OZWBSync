@@ -50,3 +50,4 @@ def test_get_categories():
 
     loaded_categories = db.load_product_categories()
     assert loaded_categories != []
+    db.clear_db()
