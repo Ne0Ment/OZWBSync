@@ -10,12 +10,6 @@ OZON_ATTRIBUTE_VERIFIER_PATH = 'ms_attrib_dict.pickle'
 
 
 class DBConnection():
-    """
-     - load all ProductCaterogires
-     - load ProductCategory
-     - update ProductCategory
-    """
-
     def __init__(self, db_uri=DEFAULT_DB_URI, db_name=DEFAULT_DB_NAME) -> None:
         self.uri = db_uri
         self.client: MongoClient = MongoClient(self.uri)
