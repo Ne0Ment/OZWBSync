@@ -1,32 +1,6 @@
-import pickle
-
 import ozonattributes as ozon
-from ozonproduct import OzonProductCategory, OzonDimensionUnit, OzonProductDimensions, OzonProductGeneralInfo, OzonProductMedia, OzonProductWeight, OzonWeightUnit, OzonGeneralProduct, OzonProduct
-
-OZON_ATTRIB_DICT_FILENAME = 'ms_attrib_dict.pickle'
-
-
-class OzonAttributeVerifier():
-    def __init__(self, dict_path=OZON_ATTRIB_DICT_FILENAME) -> None:
-        with open(dict_path, 'rb') as f:
-            self.attrib_dict: dict = pickle.load(f)
-
-    def _verify_value(self, attribute_id: int, value):
-        if attribute_id not in self.attrib_dict:
-            raise ValueError(attribute_id)
-        if self.attrib_dict[attribute_id]['values'] == []:
-            return True
-        if ozon.id2class[attribute_id] == ozon.BrandAttribute and value == 'Нет бренда':
-            return True
-        return len([i for i in self.attrib_dict[attribute_id]['values'] if i['value'] == value]) != 0
-
-    def verify_attribute(self, attribute: ozon.Attribute):
-        if not attribute.verify():
-            return False
-        if type(attribute.value) == list:
-            return all([self._verify_value(attribute._id, i) for i in attribute.value])
-
-        return self._verify_value(attribute._id, attribute.value)
+from ozonproduct import OzonProductCategory, OzonDimensionUnit, OzonProductDimensions, OzonProductGeneralInfo, OzonProductMedia, OzonProductPrice, OzonProductWeight, OzonWeightUnit, OzonGeneralProduct, OzonProduct
+from verifiers import OzonAttributeVerifier
 
 
 class OzonAttributeSerializer():
@@ -69,6 +43,11 @@ class OzonGeneralProductSerializer():
                 'width': product.dimensions.width,
                 'height': product.dimensions.height
             },
+            'price': {
+                'old_price': product.price.old_price,
+                'min_price': product.price.min_price,
+                'price': product.price.price
+            },
             'attributes': [self.attribute_serializer.serialize(i) for i in product.attributes],
             'varying_attributes': [
                 [self.attribute_serializer.serialize(attribute_variety)
@@ -96,7 +75,11 @@ class OzonGeneralProductSerializer():
                                 for varying_attribute in data['varying_attributes']],
 
             info=OzonProductGeneralInfo(
-                data['name'], data['offer_id'], data['category_id'])
+                data['name'], data['offer_id'], data['category_id']),
+
+            price=OzonProductPrice(data['price']['old_price'],
+                                   data['price']['price'],
+                                   data['price']['min_price'])
 
         )
 

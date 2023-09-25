@@ -2,9 +2,7 @@ from enum import Enum
 from typing import List
 
 from ozonattributes import Attribute
-from itertools import product as iter_product
-
-from python.utility import same_class
+from utility import same_class
 
 
 class OzonDimensionUnit(Enum):
@@ -64,7 +62,7 @@ class OzonProductWeight():
         return f'unit: {self.weight_unit} weight: {self.weight}\n'
 
 
-class OzonProductPrices():
+class OzonProductPrice():
     def __init__(self, old_price: str, price: str, min_price: str) -> None:
         self.old_price = old_price
         self.price = price
@@ -110,12 +108,13 @@ class OzonProductGeneralInfo():
 
 class OzonProduct():
     def __init__(self, dimensions: OzonProductDimensions, weight: OzonProductWeight,
-                 media: OzonProductMedia, attributes: set[Attribute], info: OzonProductGeneralInfo) -> None:
+                 media: OzonProductMedia, attributes: set[Attribute], info: OzonProductGeneralInfo, price: OzonProductPrice) -> None:
         self.dimensions = dimensions
         self.weight = weight
         self.media = media
         self.attributes = attributes
         self.info = info
+        self.price = price
 
     @same_class
     def __eq__(self, other: object) -> bool:
@@ -123,7 +122,8 @@ class OzonProduct():
             self.weight == other.weight and \
             self.media == other.media and \
             self.attributes == other.attributes and \
-            self.info == other.info
+            self.info == other.info and \
+            self.price == other.price
 
     def __str__(self) -> str:
         attributes_str = '\n' + \
@@ -133,6 +133,7 @@ class OzonProduct():
             'weight: ' + str(self.weight) + \
             'media: ' + str(self.media) + \
             'dimensions: ' + str(self.dimensions) + \
+            'price: ' + str(self.price) + \
             'attributes: ' + attributes_str
 
 
@@ -140,20 +141,20 @@ class OzonGeneralProduct(OzonProduct):
     def __init__(self, dimensions: OzonProductDimensions, weight: OzonProductWeight,
                  media: OzonProductMedia, attributes: List[Attribute],
                  varying_attributes: List[List[Attribute]],
-                 info: OzonProductGeneralInfo) -> None:
-        super().__init__(dimensions, weight, media, attributes, info)
+                 info: OzonProductGeneralInfo, price: OzonProductPrice) -> None:
+        super().__init__(dimensions, weight, media, attributes, info, price)
         self.varying_attributes = varying_attributes
 
     def expand_into_products(self) -> List[OzonProduct]:
         products = []
-        attribute_variations = iter_product(*self.varying_attributes)
-        for attribute_variation in attribute_variations:
+        for attribute_variation in self.varying_attributes:
             products.append(OzonProduct(self.dimensions,
                                         self.weight,
                                         self.media,
                                         self.attributes | set(
                                             attribute_variation),
-                                        self.info))
+                                        self.info,
+                                        self.price))
         return products
 
     @same_class
@@ -163,7 +164,8 @@ class OzonGeneralProduct(OzonProduct):
             self.media == other.media and \
             self.attributes == other.attributes and \
             self.varying_attributes == other.varying_attributes and \
-            self.info == other.info
+            self.info == other.info and \
+            self.price == other.price
 
 
 class OzonProductCategory():

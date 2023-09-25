@@ -1,6 +1,5 @@
 from typing import List
-
-from python.utility import same_class
+from utility import same_class
 
 
 class Attribute():

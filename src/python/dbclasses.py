@@ -1,12 +1,12 @@
 from pymongo.mongo_client import MongoClient
 
-from python.ozonproduct import OzonProductCategory
-from python.serializers import OzonAttributeSerializer, OzonAttributeVerifier, OzonGeneralProductSerializer, OzonProductCategorySerializer
+from ozonproduct import OzonProductCategory
+from serializers import OzonAttributeSerializer, OzonAttributeVerifier, OzonGeneralProductSerializer, OzonProductCategorySerializer
 
 DEFAULT_DB_URI = 'mongodb://localhost:27017'
 DEFAULT_DB_NAME = 'OZWBSync'
 PRODUCT_CATEGORIES_COLLECTION_NAME = 'product-categories'
-OZON_ATTRIBUTE_VERIFIER_PATH = 'ms_attrib_dict.pickle'
+OZON_DICT_COLLECTION_NAME = 'ozon-dicts'
 
 
 class DBConnection():
@@ -16,8 +16,9 @@ class DBConnection():
         self.db_name = db_name
         self.db = self.client[db_name]
         self.product_categories = self.db[PRODUCT_CATEGORIES_COLLECTION_NAME]
+        self.ozon_dicts = self.db[OZON_DICT_COLLECTION_NAME]
         self.attribute_serializer = OzonAttributeSerializer(
-            OzonAttributeVerifier(OZON_ATTRIBUTE_VERIFIER_PATH))
+            self.init_verifier())
         self.product_serializer = OzonGeneralProductSerializer(
             self.attribute_serializer)
         self.category_serializer = OzonProductCategorySerializer(
@@ -44,3 +45,13 @@ class DBConnection():
 
     def clear_db(self):
         self.client.drop_database(self.db_name)
+
+    def upload_ozon_dicts(self, ozon_dicts):
+        inserted_id = self.ozon_dicts.insert_one(ozon_dicts).inserted_id
+        self.ozon_dicts.delete_many({'_id': {'$ne': inserted_id}})
+
+    def get_ozon_dicts(self):
+        return self.ozon_dicts.find_one()
+
+    def init_verifier(self):
+        return OzonAttributeVerifier(dict((int(key) if key != '_id' else -1, value) for (key, value) in self.get_ozon_dicts().items()))

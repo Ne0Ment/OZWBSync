@@ -1,6 +1,6 @@
 from python.dbclasses import DBConnection
 from python.ozonattributes import ColorAttribute, NameAttribute, PhotoProductSizeAttribute, SearchTagsAttribute
-from python.ozonproduct import OzonDimensionUnit, OzonGeneralProduct, OzonProductCategory, OzonProductDimensions, OzonProductGeneralInfo, OzonProductMedia, OzonProductWeight, OzonWeightUnit
+from python.ozonproduct import OzonDimensionUnit, OzonGeneralProduct, OzonProductCategory, OzonProductDimensions, OzonProductGeneralInfo, OzonProductMedia, OzonProductPrice, OzonProductWeight, OzonWeightUnit
 
 
 dimensions1 = OzonProductDimensions(OzonDimensionUnit.MM, 10, 100, 1000)
@@ -9,6 +9,7 @@ media1 = OzonProductMedia(['asdf', 'qwerty'])
 attributes1 = set(
     [NameAttribute("asdf"), SearchTagsAttribute("amogus, sus, bebra")])
 general_info1 = OzonProductGeneralInfo("asdf", "amogus", "4206942069")
+price1 = OzonProductPrice(2000, 1500, 1000)
 
 product1 = OzonGeneralProduct(dimensions1, weight1, media1,
                               attributes1, [
@@ -16,7 +17,7 @@ product1 = OzonGeneralProduct(dimensions1, weight1, media1,
                                    ColorAttribute(["белый"])],
                                   [PhotoProductSizeAttribute(
                                       '62'), PhotoProductSizeAttribute('64')]
-                              ], general_info1)
+                              ], general_info1, price1)
 
 category1 = OzonProductCategory("asdf", "qwerty", [product1])
 category2 = OzonProductCategory("bebrasus", "deltaplan", [product1])

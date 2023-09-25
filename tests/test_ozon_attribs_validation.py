@@ -1,7 +1,8 @@
+from dbclasses import DBConnection
 from python.ozonattributes import AdultAttribute, AnnotationAttribute, BrandAttribute, CareInstructionsAttribute, ColorAttribute, ColorNameAttribute, GenderAttribute, GroupingAttribute, JsonSizeTableAttribute, MaterialAttribute, MaterialCompositionAttribute, NameAttribute, NeckShapeAttribute, PackageTypeAttribute, PackagedWeightAttribute, PhotoProductSizeAttribute, PrintTypeAttribute, ProducerArticleAttribute, ProducerCountryAttribute, ProducerSizeAttribute, ProductsPerPackageAttribute, RichContentAttribute, RuSizeAttribute, SearchTagsAttribute, SeriesAttribute, SleeveLengthAttribute, SleeveTypeAttribute, TargetAudienceAttribute, TypeAttribute
-from python.serializers import OzonAttributeVerifier
 
-attributeVerifier = OzonAttributeVerifier("ms_attrib_dict.pickle")
+
+attributeVerifier = DBConnection().init_verifier()
 
 
 def test_brand():

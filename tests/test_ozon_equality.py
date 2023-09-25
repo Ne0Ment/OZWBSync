@@ -1,5 +1,5 @@
 from python.ozonattributes import NameAttribute, SearchTagsAttribute
-from python.ozonproduct import OzonProduct, OzonProductDimensions, OzonDimensionUnit, OzonProductWeight, OzonWeightUnit, OzonProductMedia, OzonProductGeneralInfo
+from python.ozonproduct import OzonProduct, OzonProductDimensions, OzonDimensionUnit, OzonProductPrice, OzonProductWeight, OzonWeightUnit, OzonProductMedia, OzonProductGeneralInfo
 
 
 dimensions1 = OzonProductDimensions(OzonDimensionUnit.MM, 10, 100, 1000)
@@ -8,6 +8,7 @@ media1 = OzonProductMedia(['asdf', 'qwerty'])
 attributes1 = set(
     [NameAttribute("asdf"), SearchTagsAttribute("amogus, sus, bebra")])
 general_info1 = OzonProductGeneralInfo("asdf", "amogus", "4206942069")
+price1 = OzonProductPrice(2000, 1500, 1000)
 
 dimensions2 = OzonProductDimensions(OzonDimensionUnit.MM, 10, 100, 1000)
 weight2 = OzonProductWeight(OzonWeightUnit.GRAMMS, 1000)
@@ -15,6 +16,7 @@ media2 = OzonProductMedia(['asdf', 'qwerty'])
 attributes2 = set(
     [NameAttribute("asdf"), SearchTagsAttribute("amogus, sus, bebra")])
 general_info2 = OzonProductGeneralInfo("asdf", "amogus", "4206942069")
+price2 = OzonProductPrice(2000, 1500, 1000)
 
 dimensions3 = OzonProductDimensions(OzonDimensionUnit.MM, 10, 999, 1000)
 weight3 = OzonProductWeight(OzonWeightUnit.GRAMMS, 10)
@@ -22,11 +24,12 @@ media3 = OzonProductMedia(['asdf', 'qty'])
 attributes3 = set([NameAttribute("asasdads"),
                   SearchTagsAttribute("amogus, sus")])
 general_info3 = OzonProductGeneralInfo("asdf", "amos", "420694")
+price3 = OzonProductPrice(2000, 1500, 1000)
 
 
-product1 = OzonProduct(dimensions1, weight1, media1, attributes1, general_info1)
-product2 = OzonProduct(dimensions2, weight2, media2, attributes2, general_info2)
-product3 = OzonProduct(dimensions3, weight3, media3, attributes3, general_info3)
+product1 = OzonProduct(dimensions1, weight1, media1, attributes1, general_info1, price1)
+product2 = OzonProduct(dimensions2, weight2, media2, attributes2, general_info2, price2)
+product3 = OzonProduct(dimensions3, weight3, media3, attributes3, general_info3, price3)
 
 
 def test_dimensions_equality():
