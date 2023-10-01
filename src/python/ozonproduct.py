@@ -148,12 +148,15 @@ class OzonGeneralProduct(OzonProduct):
     def expand_into_products(self) -> List[OzonProduct]:
         products = []
         for attribute_variation in self.varying_attributes:
+            variation_size = [
+                a for a in attribute_variation if a._id == 9533][0].value
             products.append(OzonProduct(self.dimensions,
                                         self.weight,
                                         self.media,
                                         self.attributes | set(
                                             attribute_variation),
-                                        self.info,
+                                        OzonProductGeneralInfo(
+                                            self.info.name, f'{self.info.offer_id}_{variation_size}', self.info.category_id),
                                         self.price))
         return products
 

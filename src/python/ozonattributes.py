@@ -199,8 +199,8 @@ class AdultAttribute(BoolAttribute):
         super().__init__(9070, 'Признак 18+', value)
 
 
-class TargetAudienceAttribute(StringAttribute):
-    def __init__(self, value):
+class TargetAudienceAttribute(MultiStringAttribute):
+    def __init__(self, value: List[str]):
         super().__init__(9390, 'Целевая аудитория', value)
 
 
@@ -263,7 +263,7 @@ id2class = {9070: AdultAttribute,
             9437: PrintTypeAttribute,
             9024: ProducerArticleAttribute,
             4389: ProducerCountryAttribute,
-            9633: ProducerSizeAttribute,
+            9533: ProducerSizeAttribute,
             9661: ProductsPerPackageAttribute,
             11254: RichContentAttribute,
             4295: RuSizeAttribute,
@@ -294,7 +294,7 @@ class2id = {'AdultAttribute': 9070,
             'PrintTypeAttribute': 9437,
             'ProducerArticleAttribute': 9024,
             'ProducerCountryAttribute': 4389,
-            'ProducerSizeAttribute': 9633,
+            'ProducerSizeAttribute': 9533,
             'ProductsPerPackageAttribute': 9661,
             'RichContentAttribute': 11254,
             'RuSizeAttribute': 4295,

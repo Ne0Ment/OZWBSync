@@ -18,3 +18,9 @@ class OzonAttributeVerifier():
             return all([self._verify_value(attribute._id, i) for i in attribute.value])
 
         return self._verify_value(attribute._id, attribute.value)
+
+    def _get_value_id(self, attribute_id, value):
+        for i in self.attrib_dict[attribute_id]['values']:
+            if i['value'] == value:
+                return i['id']
+        return 0

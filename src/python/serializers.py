@@ -1,3 +1,4 @@
+from logistics import CategoryStock, Stock
 import ozonattributes as ozon
 from ozonproduct import OzonProductCategory, OzonDimensionUnit, OzonProductDimensions, OzonProductGeneralInfo, OzonProductMedia, OzonProductPrice, OzonProductWeight, OzonWeightUnit, OzonGeneralProduct, OzonProduct
 from verifiers import OzonAttributeVerifier
@@ -103,3 +104,34 @@ class OzonProductCategorySerializer():
             category_products=[self.general_product_serializer.deserialize(general_product)
                                for general_product in data['category_products']]
         )
+
+
+class StockSerializer():
+    def serialize(self, stock: Stock):
+        return {
+            'size': stock.size,
+            'color': stock.color,
+            'stock': stock.stock
+        }
+
+    def deserialize(self, data):
+        return Stock(data['size'],
+                     data['color'],
+                     data['stock'])
+
+
+class CategoryStockSerializer():
+    def __init__(self) -> None:
+        self.stock_serializer = StockSerializer()
+
+    def serialize(self, category_stock: CategoryStock):
+        return {
+            'category_name': category_stock.category_name,
+            'category_stocks': [self.stock_serializer.serialize(stock)
+                                for stock in category_stock.category_stocks]
+        }
+
+    def deserialize(self, data):
+        return CategoryStock(data['category_name'],
+                             [self.stock_serializer.deserialize(stock)
+                              for stock in data['category_stocks']])

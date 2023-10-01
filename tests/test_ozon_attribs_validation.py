@@ -169,13 +169,13 @@ def test_adult():
 
 
 def test_targetaudience():
-    attrib = TargetAudienceAttribute('Взрослая')
+    attrib = TargetAudienceAttribute(['Взрослая'])
     assert attributeVerifier.verify_attribute(attrib) is True
 
-    attrib = TargetAudienceAttribute('Для бебр')
+    attrib = TargetAudienceAttribute(['Для бебр'])
     assert attributeVerifier.verify_attribute(attrib) is False
 
-    attrib = TargetAudienceAttribute('')
+    attrib = TargetAudienceAttribute([''])
     assert attributeVerifier.verify_attribute(attrib) is False
 
 

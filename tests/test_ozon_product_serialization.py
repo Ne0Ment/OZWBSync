@@ -1,5 +1,4 @@
-from dbclasses import DBConnection
-from python.verifiers import OzonAttributeVerifier
+from python.dbclasses import DBConnection
 from python.ozonattributes import ColorAttribute, NameAttribute, PhotoProductSizeAttribute, SearchTagsAttribute
 from python.ozonproduct import OzonGeneralProduct, OzonProductCategory, OzonProductDimensions, OzonDimensionUnit, OzonProductPrice, OzonProductWeight, OzonWeightUnit, OzonProductMedia, OzonProductGeneralInfo
 from python.serializers import OzonAttributeSerializer, OzonGeneralProductSerializer, OzonProductCategorySerializer

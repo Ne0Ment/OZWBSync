@@ -1,12 +1,14 @@
+from logistics import CategoryStock
 from pymongo.mongo_client import MongoClient
 
 from ozonproduct import OzonProductCategory
-from serializers import OzonAttributeSerializer, OzonAttributeVerifier, OzonGeneralProductSerializer, OzonProductCategorySerializer
+from serializers import CategoryStockSerializer, OzonAttributeSerializer, OzonAttributeVerifier, OzonGeneralProductSerializer, OzonProductCategorySerializer
 
 DEFAULT_DB_URI = 'mongodb://localhost:27017'
 DEFAULT_DB_NAME = 'OZWBSync'
 PRODUCT_CATEGORIES_COLLECTION_NAME = 'product-categories'
 OZON_DICT_COLLECTION_NAME = 'ozon-dicts'
+STOCK_COLLECTION_NAME = 'product-stocks'
 
 
 class DBConnection():
@@ -17,12 +19,14 @@ class DBConnection():
         self.db = self.client[db_name]
         self.product_categories = self.db[PRODUCT_CATEGORIES_COLLECTION_NAME]
         self.ozon_dicts = self.db[OZON_DICT_COLLECTION_NAME]
+        self.stocks = self.db[STOCK_COLLECTION_NAME]
         self.attribute_serializer = OzonAttributeSerializer(
             self.init_verifier())
         self.product_serializer = OzonGeneralProductSerializer(
             self.attribute_serializer)
         self.category_serializer = OzonProductCategorySerializer(
             self.product_serializer)
+        self.category_stock_serializer = CategoryStockSerializer()
 
     def test_connection(self):
         try:
@@ -55,3 +59,11 @@ class DBConnection():
 
     def init_verifier(self):
         return OzonAttributeVerifier(dict((int(key) if key != '_id' else -1, value) for (key, value) in self.get_ozon_dicts().items()))
+
+    def save_category_stock(self, stock: CategoryStock):
+        self.stocks.replace_one({'category_name': stock.category_name},
+                                self.category_stock_serializer(stock),
+                                upsert=True)
+
+    def get_category_stock(self, category_name):
+        return self.stocks.find_one({'category_name': category_name})
